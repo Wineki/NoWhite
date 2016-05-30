@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div class="wrap">
+		<canvas style="width:100%;height:100%" width="1000" height="600" id="test"></canvas>
+	</div>
+	<div class="form">
+		<label for="">speedx</label>
+		<input type="text" name="speedx" value="10">
+		<label for="">speedy</label>
+		<input type="text" name="speedy" value="-20">
+		<label for="">px</label>
+		<input type="text" name="px" value="0">
+		<label for="">py</label>
+		<input type="text" name="py" value="400">
+		<label for="">gx</label>
+		<input type="text" name="gx" value="-0.5">
+		<label for="">gy</label>
+		<input type="text" name="gy" value="2">
+		<label for="">direction</label>
+		<input type="text" name="direction" value="1">
+		<button>submit</button>
+	</div>
+</body>
+<script src="183.js"></script>
+<script src="http://s3.qhimg.com/static/2cf8bd87a8b17759/hidpiCanva.js"></script>
+<script>
+    var canvas = document.getElementById('test');
+   	var ctx = canvas.getContext('2d');
+	$('button').on('click',function(){
+		var param = {
+			speedx: parseFloat($('input[name="speedx"]').val()),
+			speedy: parseFloat($('input[name="speedy"]').val()),
+			px: parseFloat($('input[name="px"]').val()),
+			py: parseFloat($('input[name="py"]').val()),
+			gx: parseFloat($('input[name="gx"]').val()),
+			gy: parseFloat($('input[name="gy"]').val()),
+			direction: $('input[name="direction"]').val()
+		};
+        param.px += param.speedx;
+        param.py += param.speedy;
+        param.speedx += param.gx;
+        param.speedy += param.gy;
+        param.speedx = Math.max(0, param.speedx); 
+		console.log(param);
+    	ctx.beginPath();
+    	ctx.arc(param.px, param.py,1,0,Math.PI*2,true);
+    	ctx.fillStyle = "#000000";
+    	ctx.fill();
+        $('input[name="speedx"]').val(param.speedx);
+        $('input[name="speedy"]').val(param.speedy);
+        $('input[name="px"]').val(param.px);
+        $('input[name="py"]').val(param.py);
+        $('input[name="gx"]').val(param.gx);
+        $('input[name="gy"]').val(param.gy);
+	});
+</script>
+</html>
