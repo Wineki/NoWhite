@@ -9,7 +9,7 @@ function dEgg(){
 			w: canvas_el.offsetWidth,
 			h: 20,
 			num: 5
-		}
+		},
 		eggshell:{
 			number: {
 				sum:40,
@@ -71,6 +71,7 @@ function dEgg(){
 				this.vs = this.vs * Math.random();
 			}
 		}
+		var img = new Image();
 		
 		/*position*/
 		this.x = position ? position.x : Math.random() * dEgg.space.w;
@@ -83,6 +84,7 @@ function dEgg(){
 			case 'image':
 			function drow(){
 				dEgg.canvas.ctx.drawImage(
+					
 				);
 			}
 		};

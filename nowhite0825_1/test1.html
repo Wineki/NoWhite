@@ -41,22 +41,22 @@
 			gy: parseFloat($('input[name="gy"]').val()),
 			direction: $('input[name="direction"]').val()
 		};
-        param.px += param.speedx;
-        param.py += param.speedy;
-        param.speedx += param.gx;
-        param.speedy += param.gy;
-        param.speedx = Math.max(0, param.speedx); 
+		param.px += param.speedx;
+		param.py += param.speedy;
+		param.speedx += param.gx;
+		param.speedy += param.gy;
+		param.speedx = Math.max(0, param.speedx); 
 		console.log(param);
-    	ctx.beginPath();
-    	ctx.arc(param.px, param.py,1,0,Math.PI*2,true);
-    	ctx.fillStyle = "#000000";
-    	ctx.fill();
-        $('input[name="speedx"]').val(param.speedx);
-        $('input[name="speedy"]').val(param.speedy);
-        $('input[name="px"]').val(param.px);
-        $('input[name="py"]').val(param.py);
-        $('input[name="gx"]').val(param.gx);
-        $('input[name="gy"]').val(param.gy);
+		ctx.beginPath();
+		ctx.arc(param.px, param.py,1,0,Math.PI*2,true);
+		ctx.fillStyle = "#000000";
+		ctx.fill();
+		$('input[name="speedx"]').val(param.speedx);
+		$('input[name="speedy"]').val(param.speedy);
+		$('input[name="px"]').val(param.px);
+		$('input[name="py"]').val(param.py);
+		$('input[name="gx"]').val(param.gx);
+		$('input[name="gy"]').val(param.gy);
 	});
 </script>
 </html>

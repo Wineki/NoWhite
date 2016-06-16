@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <style>
+        body{
+            padding:0;
+            margin:0;
+            overflow: hidden;
+        }
+        #cas{
+            display: block;
+            border:1px solid;
+            margin:50px auto;
+        }
+    </style>
+    <script>
+        onload = function(){
+            canvas = document.getElementById("cas");
+            ctx = canvas.getContext("2d");
+            ballRadius =30, g = 9.8 , mocali = 0.5,balls = [],collarg = 0.8;
+            pxpm = canvas.width/20;   //px/m
+
+            for(var i=0;i<2;i++){
+                var ball = new Ball(i*100 , canvas.height , ballRadius , "rgba("+parseInt(Math.random()*255)+","+parseInt(Math.random()*255)+","+parseInt(Math.random()*255)+" , 1)");
+                balls.push(ball);
+            }
+
+            var t0 = new Date();
+            animate()
+
+            canvas.onclick = function(event){
+                event = event || window.event;
+                var x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - canvas.offsetLeft;
+                var y= event.clientY + document.body.scrollTop + document.documentElement.scrollTop - canvas.offsetTop;
+
+                balls.forEach(function(){
+                    this.vx = (x - this.x)/20; //初速度 m/s
+                    this.vy = (y - this.y)/20;
+                    this.derection = this.vx > 0 ? true : false;
+                });
+            }
+
+            function animate(){
+                ctx.save();
+                ctx.fillStyle = "rgba(255,255,255,0.2)";
+                ctx.fillRect(0,0,canvas.width,canvas.height)
+                ctx.restore();
+                // ctx.clearRect(0,0,canvas.width,canvas.height)
+
+                 var t1 = new Date();
+                 var t = (t1 - t0)/1000;
+                 
+                 balls.forEach(function(){
+                     this.run(t);
+                 });
+                 collision();
+                 t0 = t1;
+                 
+                 if("requestAnimationFrame" in window){
+                    requestAnimationFrame(animate);
+                }
+                else if("webkitRequestAnimationFrame" in window){
+                    webkitRequestAnimationFrame(animate);
+                }
+                else if("msRequestAnimationFrame" in window){
+                    msRequestAnimationFrame(animate);
+                }
+                else if("mozRequestAnimationFrame" in window){
+                    mozRequestAnimationFrame(animate);
+                }
+            }
+        }
+
+        function collision(){
+            for(var i=0;i<balls.length;i++){
+                for(var j=0;j<balls.length;j++){
+                    var b1 = balls[i],b2 = balls[j];
+                    if(b1 !== b2){
+                        var rc = Math.sqrt(Math.pow(b1.x - b2.x , 2) + Math.pow(b1.y - b2.y , 2));
+                        if(Math.ceil(rc) <= (b1.radius + b2.radius)){
+                            console.log(rc)
+                            var ax = ((b1.vx - b2.vx)*Math.pow((b1.x - b2.x) , 2) + (b1.vy - b2.vy)*(b1.x - b2.x)*(b1.y - b2.y))/Math.pow(rc , 2)
+                            var ay = ((b1.vy - b2.vy)*Math.pow((b1.y - b2.y) , 2) + (b1.vx - b2.vx)*(b1.x - b2.x) + (b1.y - b2.y))/Math.pow(rc , 2)
+
+                            b1.derection = (b1.vx - ax)*b1.vx < 0? !b1.derection : b1.derection;
+                            b2.derection = (b2.vx + ax)*b2.vx < 0? !b2.derection : b2.derection;
+                            b1.vx = (b1.vx-ax)*collarg;
+                            b1.vy = (b1.vy-ay)*collarg;
+                            b2.vx = (b2.vx+ax)*collarg;
+                            b2.vy = (b2.vy+ay)*collarg;
+                            // var cangle = Math.atan((b1.x-b2.x)/(b1.y-b2.y));
+                            // var clength = ((b1.radius+b2.radius)-rc)/2;
+                            // var cx = clength * Math.sin(cangle);
+                            // var cy = clength * Math.cos(cangle);
+                            // b1.x = b1.x+cx;
+                            // b1.y = b1.y+cy;
+                            // b2.x = b2.x-cx;
+                            // b2.y = b2.y-cy;
+                            b1.x = b1.oldx;
+                            b1.y = b1.oldy;
+                            b2.x = b2.oldx;
+                            b2.y = b2.oldy;
+                            console.log(Math.sqrt(Math.pow(b1.x - b2.x , 2) + Math.pow(b1.y - b2.y , 2)))
+                        }
+                    }
+                }
+            }
+        }
+
+        Array.prototype.forEach = function(callback){
+            for(var i=0;i<this.length;i++){
+                callback.call(this[i]);
+            }
+        }
+
+        var Ball = function(x , y , r , color){
+            this.x = x;
+            this.y = y;
+            this.oldx = x;
+            this.oldy = y;
+            this.vx = 0;
+            this.vy = 0;
+            this.derection = true;
+            this.radius = r;
+            this.color = color;
+        }
+
+        Ball.prototype = {
+            paint:function(){
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x , this.y , this.radius , 0 , Math.PI*2);
+                ctx.fillStyle=this.color;
+                ctx.fill();
+                ctx.restore();
+            },
+            run:function(t){
+                this.oldx = this.x;
+                this.oldy = this.y;
+
+                if(this.derection){
+                     this.vx = this.vx < 0 ? 0 : this.vx - mocali * t;
+                 }
+                 else {
+                     this.vx = this.vx > 0 ? 0 : this.vx + mocali * t;
+                 }
+                 this.vy = this.vy + g * t;
+                 this.x += t * this.vx * pxpm;
+                 this.y += t * this.vy * pxpm;
+
+                 if(this.y > canvas.height - ballRadius || this.y < ballRadius){
+                     this.y = this.y < ballRadius ? ballRadius : (canvas.height - ballRadius);
+                     this.vy = -this.vy*collarg
+                 }
+                 if(this.x > canvas.width - ballRadius || this.x < ballRadius){
+                     this.x = this.x < ballRadius ? ballRadius : (canvas.width - ballRadius);
+                     this.derection = !this.derection;
+                     this.vx = -this.vx*collarg;
+                 }
+
+                 this.paint();
+            },
+
+        }
+
+    </script>
+    <title>Document</title>
+</head>
+<body>
+    <div >
+        <canvas id='cas' width="1200" height="600">浏览器不支持canvas</canvas>
+    </div>
+</body>
+</html>

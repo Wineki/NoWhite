@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>test</title>
+</head>
+<body>
+	<div id="wrap">
+		<canvas style="width:100%;height:100%" width="1000" height="600" id="test"></canvas>
+	</div>
+</body>
+<script src="183.js"></script>
+<script src="http://s3.qhimg.com/static/2cf8bd87a8b17759/hidpiCanva.js"></script>
+<script>
+	var canvas = document.getElementById("test");
+	var ctx = canvas.getContext('2d');
+	ballRadius =30, g = 9.8 , mocali = 0.5,balls = [],collarg = 0.8;
+	pxpm = canvas.width/20;
+	// var p = {x:0,y:0};
+	// var img = new Image();
+	// /*form eggSell*/
+	// img.src = "http://pic.58pic.com/58pic/15/30/52/29s58PIC2gf_1024.jpg";
+	// var direction = 1;
+	// var fallingHeight = 200;
+	// var time = 0;
+	// var isfinish = false;
+	// img.onload= function(){
+	// 	setInterval(function(){
+	// 		ctx.clearRect(0,0,canvas.width,canvas.height);
+	// 		ctx.drawImage(img,p.x,p.y,20,20);
+	// 		if(p.y == fallingHeight && isfinish == false){
+	// 			direction = 0;
+	// 			time++;
+	// 			isfinish = true;
+	// 		}else if(p.y == fallingHeight*0.5 && time == 1 && isfinish == true){
+	// 			direction = 1;
+	// 			time++;
+	// 			isfinish = false;
+	// 		}else if(p.y == fallingHeight*0.75 && time == 2 && isfinish == true){
+	// 			direction = 0;
+	// 			time++;
+	// 			isfinish = false;
+	// 		}else if(p.y == fallingHeight*0.87 && time == 3 && isfinish == true){
+	// 			direction = 1;
+	// 			time++;
+	// 			isfinish = false;
+	// 		}
+	// 		ballFall(direction,1);
+	// 	},9);
+	// };
+	// function ballFall(direction,speed){
+	// 	if(direction == 1){
+	// 		p.y = p.y + speed;
+	// 	}else{
+	// 		p.y = p.y - speed;
+	// 	}
+	// }
+	Array.prototype.forEach = function(callback){
+        for(var i=0;i<this.length;i++){
+            callback.call(this[i]);
+        }
+    }
+    balls.forEach(function(){
+        this.run(t);
+    });
+	var Ball = function(x , y, src){
+		this.x = x;
+		this.y = y;
+		this.oldx = x;
+		this.oldy = y;
+		this.vx = 0;
+		this.vy = 0;
+		this.direction = true;
+		this.src = src;
+	}
+	Ball.prototype = {
+		paint:function(){
+			img.onload=function(){
+				ctx.drawImage(this.src,p.x,p.y,20,20);
+			}
+		},
+		run:function(){
+			this.oldx = this.x;
+                this.oldy = this.y;
+
+                if(this.derection){
+                     this.vx = this.vx < 0 ? 0 : this.vx - mocali * t;
+                 }
+                 else {
+                     this.vx = this.vx > 0 ? 0 : this.vx + mocali * t;
+                 }
+                 this.vy = this.vy + g * t;
+                 this.x += t * this.vx * pxpm;
+                 this.y += t * this.vy * pxpm;
+
+                 if(this.y > canvas.height - ballRadius || this.y < ballRadius){
+                     this.y = this.y < ballRadius ? ballRadius : (canvas.height - ballRadius);
+                     this.vy = -this.vy*collarg
+                 }
+                 if(this.x > canvas.width - ballRadius || this.x < ballRadius){
+                     this.x = this.x < ballRadius ? ballRadius : (canvas.width - ballRadius);
+                     this.derection = !this.derection;
+                     this.vx = -this.vx*collarg;
+                 }
+
+            this.paint();
+		}
+	};
+</script>
+</html>
