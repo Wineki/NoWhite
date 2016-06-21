@@ -11,9 +11,11 @@
 		var ctx = c.getContext("2d");
 		var w = c.width = window.innerWidth;
 		var h = c.height = window.innerHeight;
-		var clearColor = 'rgba(0, 0, 0, .1)';
+		var clearColor = 'rgba(255, 255, 255, 0.5)';
 		var max = 30;
 		var drops = [];
+		var pxpm = c.width/20;
+		var ballRadius =30, g = 9.8 , mocali = 0.5;
 
 		function random(min, max) {
 		    return Math.random() * (max - min) + min;
@@ -28,7 +30,7 @@
 				this.color = 'hsl(100, 100%, 62%)';
 				this.w = 2;
 				this.h = 1;
-				this.vy = random(4, 5);
+				this.vy = 20;
 				this.vw = 3;
 				this.vh = 1;
 				this.size = 20;
@@ -88,6 +90,17 @@
 					}
 				}
 				
+			},
+			falling: function(){
+				this.oldx = this.x;
+                this.oldy = this.y;
+                this.vy = this.vy + g * t;
+                this.y += t * this.vy * pxpm;
+                if(this.y > canvas.height - ballRadius || this.y < ballRadius){
+                     this.y = this.y < ballRadius ? ballRadius : (canvas.height - ballRadius);
+                     this.vy = -this.vy*collarg
+                 }
+                 this.draw();
 			}
 		}
 
@@ -101,7 +114,7 @@
 				(function(j){
 					setTimeout(function(){
 						var o = new O();
-						o.init();
+						//o.init();
 						drops.push(o);
 					}, j * 200)
 				}(i));
@@ -111,20 +124,34 @@
 
 		function anim() {
 			//ctx.clearRect(0,0,w,h);
-			//ctx.fillStyle = clearColor;
-			//ctx.fillRect(0,0,w,h);
+			ctx.fillStyle = clearColor;
+			ctx.fillRect(0,0,w,h);
 			for(var i in drops){
 				drops[i].draw();
 			}
-			//requestAnimationFrame(anim);
+			requestAnimationFrame(anim);
 		}
-
+		
 
 		window.addEventListener("resize", resize);
-		ctx.fillStyle = clearColor;
-		ctx.fillRect(0,0,w,h);
 		setup();
-		anim();
+		//anim();
+		var t0 = new Date();
+		function falling() {
+			ctx.save();
+			ctx.fillStyle = clearColor;
+			ctx.fillRect(0,0,w,h);
+			//ctx.clearRect(0,0,w,h);
+			var t1 = new Date();
+			var t = (t1 - t0)/1000;
+            drops.forEach(function(){
+            	this.falling(t);
+            	t0 = t1;
+            });
+			//ctx.restore();
+			requestAnimationFrame(falling);
+		}
+		falling();
 	</script>
 </body>
 </html>

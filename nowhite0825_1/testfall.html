@@ -21,7 +21,7 @@
             ballRadius =30, g = 9.8 , mocali = 0.5,balls = [],collarg = 0.8;
             pxpm = canvas.width/20;   //px/m
 
-            for(var i=0;i<2;i++){
+            for(var i=0;i<1;i++){
                 var ball = new Ball(i*100 , canvas.height , ballRadius , "rgba("+parseInt(Math.random()*255)+","+parseInt(Math.random()*255)+","+parseInt(Math.random()*255)+" , 1)");
                 balls.push(ball);
             }
@@ -43,9 +43,9 @@
 
             function animate(){
                 ctx.save();
-                ctx.fillStyle = "rgba(255,255,255,0.2)";
+                ctx.fillStyle = "rgba(255, 255, 255, 1)";
                 ctx.fillRect(0,0,canvas.width,canvas.height)
-                ctx.restore();
+                // ctx.restore();
                 // ctx.clearRect(0,0,canvas.width,canvas.height)
 
                  var t1 = new Date();
@@ -54,7 +54,7 @@
                  balls.forEach(function(){
                      this.run(t);
                  });
-                 collision();
+                 //collision();
                  t0 = t1;
                  
                  if("requestAnimationFrame" in window){
