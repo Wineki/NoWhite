@@ -12,34 +12,36 @@
 		var w = c.width = window.innerWidth;
 		var h = c.height = window.innerHeight;
 		var clearColor = 'rgba(255, 255, 255, 0.5)';
-		var max = 30;
+		var max = 1;
 		var drops = [];
 		var pxpm = c.width/20;
-		var ballRadius =30, g = 9.8 , mocali = 0.5;
+		var ballRadius =30, g = 9.8 , mocali = 0.5,collarg = 0.8;
 
 		function random(min, max) {
 		    return Math.random() * (max - min) + min;
 		}
 
-		function O() {}
+		function O() {
+			this.x = random(0, w);
+			this.y = 0;
+			this.color = 'hsl(100, 100%, 62%)';
+			this.w = 2;
+			this.h = 1;
+			this.vy = 2;
+			this.vw = 3;
+			this.vh = 1;
+			this.size = 20;
+			this.hit = random(h * .8, h * .9);
+			this.a = 1;
+			this.va = .96;
+			this.angle = 45;
+			this.isimg = 1;
+			this.src = 'http://pic.58pic.com/58pic/15/30/52/29s58PIC2gf_1024.jpg';
+		}
 
 		O.prototype = {
 			init: function() {
-				this.x = random(0, w);
-				this.y = 0;
-				this.color = 'hsl(100, 100%, 62%)';
-				this.w = 2;
-				this.h = 1;
-				this.vy = 20;
-				this.vw = 3;
-				this.vh = 1;
-				this.size = 20;
-				this.hit = random(h * .8, h * .9);
-				this.a = 1;
-				this.va = .96;
-				this.angle = 45;
-				this.isimg = 1;
-				this.src = 'http://pic.58pic.com/58pic/15/30/52/29s58PIC2gf_1024.jpg';
+				
 			},
 			draw: function() {
 				if (this.y > this.hit) {
@@ -73,6 +75,7 @@
 				}
 				this.update();
 			},
+			/*下落*/
 			update: function() {
 				if(this.y < this.hit){
 					this.y += this.vy;
@@ -91,13 +94,14 @@
 				}
 				
 			},
-			falling: function(){
+			/*回弹效果*/
+			bumb: function(t){
 				this.oldx = this.x;
                 this.oldy = this.y;
                 this.vy = this.vy + g * t;
                 this.y += t * this.vy * pxpm;
-                if(this.y > canvas.height - ballRadius || this.y < ballRadius){
-                     this.y = this.y < ballRadius ? ballRadius : (canvas.height - ballRadius);
+                if(this.y > c.height - ballRadius || this.y < ballRadius){
+                     this.y = this.y < ballRadius ? ballRadius : (c.height - ballRadius);
                      this.vy = -this.vy*collarg
                  }
                  this.draw();
@@ -135,7 +139,7 @@
 
 		window.addEventListener("resize", resize);
 		setup();
-		//anim();
+		anim();
 		var t0 = new Date();
 		function falling() {
 			ctx.save();
@@ -144,14 +148,15 @@
 			//ctx.clearRect(0,0,w,h);
 			var t1 = new Date();
 			var t = (t1 - t0)/1000;
-            drops.forEach(function(){
-            	this.falling(t);
-            	t0 = t1;
+            drops.forEach(function(item){
+            	item.bumb(t);
             });
+            
+            t0 = t1;
 			//ctx.restore();
 			requestAnimationFrame(falling);
 		}
-		falling();
+		//falling();
 	</script>
 </body>
 </html>
