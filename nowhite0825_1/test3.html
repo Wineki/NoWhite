@@ -139,7 +139,7 @@
 
 		window.addEventListener("resize", resize);
 		setup();
-		anim();
+		//anim();
 		var t0 = new Date();
 		function falling() {
 			ctx.save();
@@ -156,7 +156,7 @@
 			//ctx.restore();
 			requestAnimationFrame(falling);
 		}
-		//falling();
+		falling();
 	</script>
 </body>
 </html>

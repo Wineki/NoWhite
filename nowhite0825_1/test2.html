@@ -15,13 +15,12 @@
 function Falling(tag_id , params){
 	var canvas = document.getElementById(tag_id);
 	var _this = this;
-	_this.falling = {
-		canvas: {
+	_this.canvas = {
 			el: canvas,
 			w: canvas.offsetWidth,
 			h: canvas.offsetHeight
-		},
-		spirit: {
+		};
+	_this.spirit = {
 			clearColor: 'rgba(255, 255, 255, 0.5)',
 			shape: {
 				isimg: true,
@@ -43,7 +42,7 @@ function Falling(tag_id , params){
 				y: 0,
 				angle: 90,
 				v: 10,
-				hit: random(canvas.innerHeight * .8, canvas.innerHeight * .9)
+				hit: random(canvas.offsetHeight * .8, canvas.offsetHeight * .9)
 			},
 			animate: {
 				bumb:{
@@ -57,13 +56,12 @@ function Falling(tag_id , params){
 					va: .96
 				}
 			}
-		},
-		clearColor: 'rgba(255, 255, 255, 0.5)',
-		g: 9.8
-	};
-	_this.falling.initCanvas();
-	_this.falling.canvasSize();
-	_this.falling.spiDraw();
+		};
+	_this.clearColor = 'rgba(255, 255, 255, 0.5)';
+	_this.g = 9.8;
+	_this.initCanvas();
+	_this.canvasSize();
+	_this.spiDraw();
 };
 	Falling.prototype = {
 		constructor:Falling,
@@ -80,7 +78,7 @@ function Falling(tag_id , params){
 		/*绘制质点*/
 		spiDraw: function(){
 			var _this = this;
-			if(_this.animate.rain.value){
+			if(_this.spirit.animate.rain.value){
 				if (_this.spirit.move.y > _this.spirit.move.hit){
 					_this.bezierDraw();
 				}
