@@ -99,7 +99,6 @@ function Falling(tag_id , params){
 		bezierDraw: function(){
 			_this.canvas.ctx.beginPath();
 			_this.canvas.ctx.moreTo(_this.spirit.move.x,_this.spirit.move.y - _this.spirit.shape.height/2);
-			
 		},
 		
 		spiFall: function(){
@@ -113,12 +112,49 @@ function Falling(tag_id , params){
 			} else {
 				console.log('finish');
 			}
+		},
+		
+		/*回弹效果*/
+		bumb: function(t){
+			var _this = this;
+			_this.oldx = _this.move.x;
+			_this.oldy = _this.move.y;
+			_this.move.vy = _this.move.vy + _this.g * t;
+			_this.y += t * _this.vy * _this.pxpm;
+			if(_this.move.y > _this.canvas.h - _this.spirit.shape.height || _this.move.y < _this.spirit.shape.height){
+				_this.move.y = _this.move.y < _this.spirit.shape.height ? _this.spirit.shape.height : (_this.canvas.h - _this.spirit.shape.height);
+				_this.move.vy = -_this.move.vy * _this.collarg;
+			}
+			_this.draw();
+		},
+		
+		start: function(){
+			var _this = this;
+			_this.canvas.ctx.fillStyle = _this.clearColor;
+			_this.canvas.ctx.fillRect(0,0,_this.canvas.w,_this.canvas.h);
+			/*回弹效果*/
+			if(_this.spirit.animate.bumb.value){
+				var t1 = new Date();
+				var t = (t1 - t0)/1000;
+				for(var i in drops){
+					drops[i].bumb(t);
+				}
+				t0 = t1;
+			}else{
+			/*下落效果*/
+				for(var i in drops){
+					drops[i].draw();
+				}
+			}
+			requestAnimationFrame(_this.start);
 		}
 	};
 function random(min, max) {
     return Math.random() * (max - min) + min;
 }
 window.drops = [];
-new Falling('test');
+var o = new Falling('test');
+t0 = new Date();
+o.start();
 </script>
 </html>
