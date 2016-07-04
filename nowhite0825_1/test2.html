@@ -12,59 +12,19 @@
 <script src="183.js"></script>
 <script src="http://s3.qhimg.com/static/2cf8bd87a8b17759/hidpiCanva.js"></script>
 <script>
-function Falling(tag_id , params){
-	var canvas = document.getElementById(tag_id);
-	var _this = this;
-	_this.canvas = {
+	function Canvas(tag_id){
+		var _this = this;
+		var canvas = document.getElementById(tag_id);
+		_this.canvas = {
 			el: canvas,
 			w: canvas.offsetWidth,
 			h: canvas.offsetHeight
 		};
-	_this.spirit = {
-			clearColor: 'rgba(255, 255, 255, 0.5)',
-			shape: {
-				isimg: true,
-				src: 'http://pic.58pic.com/58pic/15/30/52/29s58PIC2gf_1024.jpg',
-				width: 2,
-				height: 1,
-				type: 'line',
-				color: 'hsl(100, 100%, 62%)',
-				a: 1
-			},
-			num: {
-				random: true,
-				value: '',
-				max: 20,
-				min: 1
-			},
-			move: {
-				x: random(0, canvas.offsetWidth),
-				y: 0,
-				angle: 90,
-				v: 10,
-				hit: random(canvas.offsetHeight * .8, canvas.offsetHeight * .9)
-			},
-			animate: {
-				bumb:{
-					value: true,
-					pxpm: canvas.offsetWidth/20,
-					collarg: 0.8
-				},
-				rain: {
-					value: '',
-					a: 1,
-					va: .96
-				}
-			}
-		};
-	_this.clearColor = 'rgba(255, 255, 255, 0.5)';
-	_this.g = 9.8;
-	_this.initCanvas();
-	_this.canvasSize();
-	_this.spiDraw();
-};
-	Falling.prototype = {
-		constructor:Falling,
+		_this.initCanvas();
+		_this.canvasSize();
+	};
+	Canvas.prototype = {
+		constructor: Canvas,
 		initCanvas: function(){
 			var _this = this;
 			_this.canvas.ctx = _this.canvas.el.getContext('2d');
@@ -74,6 +34,60 @@ function Falling(tag_id , params){
 			var _this = this;
 			_this.canvas.el.width = _this.canvas.width;
 			_this.canvas.el.height = _this.canvas.height;
+		}
+	};
+	
+	
+	function Falling(canvas , params){
+		var _this = this;
+		_this.canvasWrap = canvas;
+		_this.drops = [];
+		_this.initSpirit();
+	};
+	Falling.prototype = {
+		constructor:Falling,
+		initSpirit: function(){
+			var _this = this;
+			_this.spirit = {
+				clearColor: 'rgba(255, 255, 255, 0.5)',
+				shape: {
+					isimg: true,
+					src: 'http://pic.58pic.com/58pic/15/30/52/29s58PIC2gf_1024.jpg',
+					width: 2,
+					height: 1,
+					type: 'line',
+					color: 'hsl(100, 100%, 62%)',
+					a: 1
+				},
+				num: {
+					random: false,
+					value: 1,
+					max: 20,
+					min: 1
+				},
+				move: {
+					x: random(0, _this.canvasWrap.canvas.w),
+					y: 0,
+					angle: 90,
+					v: 10,
+					hit: random(_this.canvasWrap.canvas.h * .8, _this.canvasWrap.canvas.h * .9)
+				},
+				animate: {
+					bumb:{
+						value: false,
+						pxpm: _this.canvasWrap.canvas.w/20,
+						collarg: 0.8
+					},
+					rain: {
+						value: '',
+						a: 1,
+						va: .96
+					}
+				}
+			};
+			_this.clearColor = 'rgba(255, 255, 255, 0.5)';
+			_this.g = 9.8;
+			_this.spiDraw();
 		},
 		/*绘制质点*/
 		spiDraw: function(){
@@ -87,7 +101,7 @@ function Falling(tag_id , params){
 				var img = new Image();
 				img.src = _this.spirit.shape.src;
 				img.onload = function(){
-					_this.canvas.ctx.drawImage(img,_this.spirit.move.x,_this.spirit.move.y,_this.spirit.shape.width,_this.spirit.shape.height);
+					_this.canvasWrap.canvas.ctx.drawImage(img,_this.spirit.move.x,_this.spirit.move.y,_this.spirit.shape.width,_this.spirit.shape.height);
 				}
 			} else {
 				_this.canvas.ctx.fillStyle = _this.spirit.shape.color;
@@ -110,6 +124,7 @@ function Falling(tag_id , params){
 				_this.spirit.move.y += _this.spirit.move.vy;
 				_this.spirit.move.x += _this.spirit.move.vx;
 			} else {
+				_this.initSpirit();
 				console.log('finish');
 			}
 		},
@@ -128,33 +143,54 @@ function Falling(tag_id , params){
 			_this.draw();
 		},
 		
+		setup: function(){
+			var _this = this;
+			if(_this.spirit.num.random){
+				var num = random(_this.spirit.num.min,_this.spirit.num.max);
+			}else{
+				var num = _this.spirit.num.value;
+			}
+			for(var i = 0; i< num; i++){
+				// (function(j){
+				// 	setTimeout(function(){
+				// 		var o = _this.initSpirit();
+				// 		_this.drops.push(o);
+				// 	}, j*200);
+				// }(i));
+				var o = new Falling(c);
+				_this.drops.push(o);
+			}
+		},
+		
 		start: function(){
 			var _this = this;
-			_this.canvas.ctx.fillStyle = _this.clearColor;
-			_this.canvas.ctx.fillRect(0,0,_this.canvas.w,_this.canvas.h);
+			_this.canvasWrap.canvas.ctx.fillStyle = _this.clearColor;
+			_this.canvasWrap.canvas.ctx.fillRect(0,0,_this.canvasWrap.canvas.w,_this.canvasWrap.canvas.h);
 			/*回弹效果*/
 			if(_this.spirit.animate.bumb.value){
 				var t1 = new Date();
 				var t = (t1 - t0)/1000;
-				for(var i in drops){
-					drops[i].bumb(t);
+				for(var i in _this.drops){
+					_this.drops[i].bumb(t);
 				}
 				t0 = t1;
 			}else{
 			/*下落效果*/
-				for(var i in drops){
-					drops[i].draw();
+				for(var i in _this.drops){
+					_this.drops[i].spiDraw();
 				}
 			}
-			requestAnimationFrame(_this.start);
+			requestAnimationFrame(function(){
+				_this.start()});
 		}
 	};
-function random(min, max) {
-    return Math.random() * (max - min) + min;
-}
-window.drops = [];
-var o = new Falling('test');
-t0 = new Date();
-o.start();
+	function random(min, max) {
+	    return Math.random() * (max - min) + min;
+	}
+	var c = new Canvas('test');
+	var o = new Falling(c);
+	t0 = new Date();
+	o.setup();
+	o.start();
 </script>
 </html>
